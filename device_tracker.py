@@ -5,8 +5,7 @@ https://home-assistant.io/components/device_tracker.bmw_connected_drive/
 """
 import logging
 
-from homeassistant.components.pandora import DOMAIN \
-    as PANDORA_DOMAIN
+from . import DOMAIN as PANDORA_DOMAIN
 from homeassistant.util import slugify
 
 DEPENDENCIES = ['pandora']

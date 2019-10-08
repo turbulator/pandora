@@ -119,7 +119,7 @@ class PandoraOnlineAccount:
     def __init__(self, username: str, password: str,
                  name: str, read_only) -> None:
         """Constructor."""
-        from pandora_online.account import PandoraOnlineAccount
+        from .pandora_online.account import PandoraOnlineAccount
 
         self.read_only = read_only
         self.account = PandoraOnlineAccount(username, password)

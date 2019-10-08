@@ -6,7 +6,7 @@ https://home-assistant.io/components/sensor.bmw_connected_drive/
 """
 import logging
 
-from homeassistant.components.pandora import DOMAIN as PANDORA_DOMAIN
+from . import DOMAIN as PANDORA_DOMAIN
 from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.icon import icon_for_battery_level
 from homeassistant.const import (CONF_UNIT_SYSTEM_IMPERIAL, VOLUME_LITERS,

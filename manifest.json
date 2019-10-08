@@ -1,0 +1,8 @@
+{
+  "domain": "pandora",
+  "name": "pandora",
+  "documentation": "https://community.home-assistant.io/t/pandora-car-alarm-integration/117125",
+  "dependencies": [],
+  "codeowners": [],
+  "requirements": []
+}

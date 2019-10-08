@@ -7,7 +7,7 @@ https://home-assistant.io/components/binary_sensor.bmw_connected_drive/
 import logging
 
 from homeassistant.components.binary_sensor import BinarySensorDevice
-from homeassistant.components.pandora import DOMAIN as PANDORA_DOMAIN
+from . import DOMAIN as PANDORA_DOMAIN
 from homeassistant.const import STATE_OFF, STATE_ON
 
 
