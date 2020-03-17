@@ -44,18 +44,9 @@ class PandoraTracker:
 
         _LOGGER.debug('Updating %s', dev_id)
         attrs = {
-            'fuel': self.vehicle.state.fuel,
             'voltage': self.vehicle.state.voltage,
             'gsm_level': self.vehicle.state.gsm_level,
-            'out_temp': self.vehicle.state.out_temp,
-            'cabin_temp': self.vehicle.state.cabin_temp,
-            'engine_temp': self.vehicle.state.engine_temp,
         }
-
-        if self.vehicle.state.bit_state_1 & 1 == 1:
-            ic='mdi:thermometer'
-        else:
-            ic='mdi:car'
 
         self._see(
             dev_id=dev_id, host_name=self.vehicle.name,
