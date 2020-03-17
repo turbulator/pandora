@@ -9,37 +9,48 @@ import logging
 from . import DOMAIN as PANDORA_DOMAIN
 from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.icon import icon_for_battery_level
-from homeassistant.const import (CONF_UNIT_SYSTEM_IMPERIAL, VOLUME_LITERS,
-                                 VOLUME_GALLONS, LENGTH_KILOMETERS,
-                                 LENGTH_MILES, TEMP_CELSIUS)
+from homeassistant.const import (LENGTH_KILOMETERS,
+                                 TEMP_CELSIUS)
 
 DEPENDENCIES = ['pandora']
 
 _LOGGER = logging.getLogger(__name__)
 
-ATTR_TO_HA_METRIC = {
-    'mileage': ['mdi:cloud', LENGTH_KILOMETERS],
-    'fuel': ['mdi:cloud', 'Prc'],
-    'cabin_temp': ['mdi:thermometer', TEMP_CELSIUS],
-    'engine_temp': ['mdi:thermometer', TEMP_CELSIUS],
-    'out_temp': ['mdi:thermometer', TEMP_CELSIUS],
+SENSOR_TYPES = {
+    'mileage': ["Milage", "mdi:map-marker-distance", LENGTH_KILOMETERS, True],
+    'fuel': ["Fuel level", 'mdi:gauge', "%", False],
+    'cabin_temp': ["Cabin temperature", 'mdi:thermometer', TEMP_CELSIUS, True],
+    'engine_temp': ["Engine temperature", 'mdi:thermometer', TEMP_CELSIUS, True],
+    'out_temp': ["Ambient temperature", 'mdi:thermometer', TEMP_CELSIUS, True],
+    'balance': ["Balance", "mdi:cash", "₽", False],
+    'speed': ["Speed", 'mdi:gauge', "km/h", True],
+    'engine_rpm': ["Engine RPM", 'mdi:gauge', None, True],
+    'gsm_level': ["GSM level", 'mdi:network-strength-2', None, True],
+    'battery': ["Battery voltage", 'mdi:car-battery', "V", True],
 }
 
 
 def setup_platform(hass, config, add_entities, discovery_info=None):
-    attribute_info = ATTR_TO_HA_METRIC
-
     accounts = hass.data[PANDORA_DOMAIN]
     _LOGGER.debug('Found Pandora accounts: %s',
                   ', '.join([a.name for a in accounts]))
     devices = []
-    attributes = ['mileage', 'fuel', 'cabin_temp', 'engine_temp', 'out_temp']
+
     for account in accounts:
         for vehicle in account.account.vehicles:
-            for attribute in attributes:
-                device = PandoraSensor(account, vehicle,
-                                       attribute,
-                                       attribute_info)
+            for parameter, _ in sorted(SENSOR_TYPES.items()):
+                name = SENSOR_TYPES[parameter][0]
+                icon = SENSOR_TYPES[parameter][1]
+                unit = SENSOR_TYPES[parameter][2]
+                state_sensitive = SENSOR_TYPES[parameter][3]
+
+                device = PandoraSensor(account, 
+                                       vehicle,
+                                       parameter,
+                                       name,
+                                       icon,
+                                       unit,
+                                       state_sensitive)
                 devices.append(device)
 
     add_entities(devices, True)
@@ -48,14 +59,16 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
 class PandoraSensor(Entity):
     """Representation of a BMW vehicle sensor."""
 
-    def __init__(self, account, vehicle, attribute: str, attribute_info):
+    def __init__(self, account, vehicle, parameter: str, name: str, icon: str, unit: str, state_sensitive: bool):
         """Constructor."""
         self._vehicle = vehicle
         self._account = account
-        self._attribute = attribute
+        self._parameter = parameter
+        self._name = '{} {}'.format(self._vehicle.name, name)
         self._state = None
-        self._name = '{} {}'.format(self._vehicle.name, self._attribute)
-        self._attribute_info = attribute_info
+        self._icon = icon
+        self._unit = unit
+        self._state_sensitive = state_sensitive
 
     @property
     def should_poll(self) -> bool:
@@ -80,10 +93,19 @@ class PandoraSensor(Entity):
         return self._state
 
     @property
+    def available(self):
+        """Return True if entity is available."""
+        return self._available
+
+    @property
+    def icon(self):
+        """Icon to use in the frontend, if any."""
+        return self._icon
+
+    @property
     def unit_of_measurement(self) -> str:
         """Get the unit of measurement."""
-        _, unit = self._attribute_info.get(self._attribute, [None, None])
-        return unit
+        return self._unit
 
     @property
     def device_state_attributes(self):
@@ -96,7 +118,12 @@ class PandoraSensor(Entity):
         """Read new state data from the library."""
         _LOGGER.debug('Updating %s', self._vehicle.name)
         vehicle_state = self._vehicle.state
-        self._state = getattr(vehicle_state, self._attribute)
+
+        if vehicle_state.online == 1 or self._state_sensitive == False:
+            self._available = True
+            self._state = getattr(vehicle_state, self._parameter)
+        else:
+            self._available = False
 
     def update_callback(self):
         """Schedule a state update."""

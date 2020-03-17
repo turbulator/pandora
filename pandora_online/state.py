@@ -45,12 +45,12 @@ class VehicleState:  # pylint: disable=too-many-public-methods
         return float(self._attributes['x']), float(self._attributes['y'])
 
     @property
-    def mileage(self) -> int:
+    def mileage(self) -> float:
         """Get the mileage of the vehicle.
 
         Returns a tuple of (value, unit_of_measurement)
         """
-        return float(self._attributes['mileage'])
+        return round(float(self._attributes['mileage']), 1)
 
     @property
     def fuel(self) -> int:
@@ -83,6 +83,46 @@ class VehicleState:  # pylint: disable=too-many-public-methods
         Returns a tuple of (value, unit_of_measurement)
         """
         return int(self._attributes['out_temp'])
+
+    @property
+    def balance(self) -> float:
+        """Get the mileage of the vehicle.
+
+        Returns a tuple of (value, unit_of_measurement)
+        """
+        return round(float(self._attributes['balance']['value']), 2)
+
+    @property
+    def speed(self) -> float:
+        """Get the mileage of the vehicle.
+
+        Returns a tuple of (value, unit_of_measurement)
+        """
+        return round(float(self._attributes['speed']), 1)
+
+    @property
+    def engine_rpm(self) -> int:
+        """Get the mileage of the vehicle.
+
+        Returns a tuple of (value, unit_of_measurement)
+        """
+        return int(self._attributes['engine_rpm'])
+
+    @property
+    def gsm_level(self) -> int:
+        """Get the mileage of the vehicle.
+
+        Returns a tuple of (value, unit_of_measurement)
+        """
+        return int(self._attributes['gsm_level'])
+
+    @property
+    def battery(self) -> float:
+        """Get the mileage of the vehicle.
+
+        Returns a tuple of (value, unit_of_measurement)
+        """
+        return round(float(self._attributes['voltage']), 1)
 
     def __getattr__(self, item):
         """Generic get function for all backend attributes."""
