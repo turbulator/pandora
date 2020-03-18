@@ -14,7 +14,7 @@ from homeassistant.helpers import discovery
 from homeassistant.helpers.event import track_time_interval
 import homeassistant.helpers.config_validation as cv
 
-REQUIREMENTS = ['bimmer_connected==0.5.3']
+REQUIREMENTS = []
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -51,14 +51,19 @@ SERVICE_UPDATE_STATE = 'update_state'
 
 
 _SERVICE_MAP = {
-    'enable_seat_heater': 'trigger_remote_seat_heater',
+    'lock': 'trigger_remote_lock',
+    'unlock': 'trigger_remote_unlock',
+    'start_engine': 'trigger_remote_start_engine',
+    'stop_engine': 'trigger_remote_stop_engine',
+    'turn_on_ext_channel': 'trigger_remote_turn_on_ext_channel',
+    'turn_off_ext_channel': 'trigger_remote_turn_off_ext_channel',
 }
 
 def setup(hass, config: dict):
     """Set up the BMW connected drive components."""
     accounts = []
-    for name, account_config in config[DOMAIN].items():
-        accounts.append(setup_account(account_config, hass, name))
+    for account_name, account_config in config[DOMAIN].items():
+        accounts.append(setup_account(account_config, hass, account_name))
 
     hass.data[DOMAIN] = accounts
 
@@ -78,7 +83,7 @@ def setup(hass, config: dict):
     return True
 
 
-def setup_account(account_config: dict, hass, name: str) \
+def setup_account(account_config: dict, hass, account_name: str) \
         -> 'PandoraOnlineAccount':
     """Set up a new BMWConnectedDriveAccount based on the config."""
     username = account_config[CONF_USERNAME]
@@ -86,8 +91,8 @@ def setup_account(account_config: dict, hass, name: str) \
     polling_interval = account_config[CONF_POLLING_INTERVAL]
     read_only = account_config[CONF_READ_ONLY]
 
-    _LOGGER.debug('Adding new account %s', name)
-    po_account = PandoraOnlineAccount(username, password, name, read_only)
+    _LOGGER.debug('Adding new account %s', account_name)
+    po_account = PandoraOnlineAccount(username, password, account_name, read_only)
 
     def execute_service(call):
         """Execute a service for a vehicle.

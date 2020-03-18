@@ -3,27 +3,7 @@
 # The services related to locking/unlocking are implemented in the lock
 # component to avoid redundancy.
 
-#light_flash:
-#  description: >
-#    Flash the lights of the vehicle. The vehicle is identified via the vin
-#    (see below).
-#  fields:
-#    vin:
-#      description: >
-#        The vehicle identification number (VIN) of the vehicle, 17 characters
-#      example: WBANXXXXXX1234567
-#
-#sound_horn:
-#  description: >
-#    Sound the horn of the vehicle. The vehicle is identified via the vin
-#    (see below).
-#  fields:
-#    vin:
-#      description: >
-#        The vehicle identification number (VIN) of the vehicle, 17 characters
-#      example: WBANXXXXXX1234567
-#
-enable_seat_heater:
+lock:
   description: >
     Description here
   fields:
@@ -32,6 +12,51 @@ enable_seat_heater:
         The vehicle identification
       example: 1234567
 
+unlock:
+  description: >
+    Description here
+  fields:
+    id:
+      description: >
+        The vehicle identification
+      example: 1234567
+
+start_engine:
+  description: >
+    Description here
+  fields:
+    id:
+      description: >
+        The vehicle identification
+      example: 1234567
+
+stop_engine:
+  description: >
+    Description here
+  fields:
+    id:
+      description: >
+        The vehicle identification
+      example: 1234567
+
+turn_on_ext_channel:
+  description: >
+    Description here
+  fields:
+    id:
+      description: >
+        The vehicle identification
+      example: 1234567
+
+turn_off_ext_channel:
+  description: >
+    Description here
+  fields:
+    id:
+      description: >
+        The vehicle identification
+      example: 1234567
+      
 update_state:
   description: >
     Fetch the last state of the vehicles of all your accounts from the BMW
