@@ -4,14 +4,14 @@ Reads vehicle status from BMW connected drive portal.
 For more details about this platform, please refer to the documentation at
 https://home-assistant.io/components/bmw_connected_drive/
 """
-import datetime
 import logging
+from datetime import datetime, timedelta
 
 import voluptuous as vol
 
 from homeassistant.const import (CONF_USERNAME, CONF_PASSWORD)
 from homeassistant.helpers import discovery
-from homeassistant.helpers.event import track_utc_time_change
+from homeassistant.helpers.event import track_time_interval
 import homeassistant.helpers.config_validation as cv
 
 REQUIREMENTS = ['bimmer_connected==0.5.3']
@@ -19,13 +19,19 @@ REQUIREMENTS = ['bimmer_connected==0.5.3']
 _LOGGER = logging.getLogger(__name__)
 
 DOMAIN = 'pandora'
+CONF_POLLING_INTERVAL = 'polling_interval'
+MIN_POLLING_INTERVAL = timedelta(seconds = 10)
+DEFAULT_POLLING_INTERVAL = timedelta(minutes = 1)
 CONF_READ_ONLY = 'read_only'
 ATTR_ID = 'id'
 
 ACCOUNT_SCHEMA = vol.Schema({
     vol.Required(CONF_USERNAME): cv.string,
     vol.Required(CONF_PASSWORD): cv.string,
-    vol.Optional(CONF_READ_ONLY, default=False): cv.boolean,
+    vol.Optional(CONF_POLLING_INTERVAL, default = DEFAULT_POLLING_INTERVAL): (
+                            vol.All(cv.time_period, vol.Clamp(min = MIN_POLLING_INTERVAL))
+                        ),
+    vol.Optional(CONF_READ_ONLY, default = False): cv.boolean,
 })
 
 CONFIG_SCHEMA = vol.Schema({
@@ -77,6 +83,7 @@ def setup_account(account_config: dict, hass, name: str) \
     """Set up a new BMWConnectedDriveAccount based on the config."""
     username = account_config[CONF_USERNAME]
     password = account_config[CONF_PASSWORD]
+    polling_interval = account_config[CONF_POLLING_INTERVAL]
     read_only = account_config[CONF_READ_ONLY]
 
     _LOGGER.debug('Adding new account %s', name)
@@ -104,11 +111,7 @@ def setup_account(account_config: dict, hass, name: str) \
             execute_service,
             schema=SERVICE_SCHEMA)
 
-    now = datetime.datetime.now()
-    track_utc_time_change(
-        hass, po_account.update,
-        minute=range(0, 60, 1),
-        second=now.second)
+    track_time_interval(hass, po_account.update, polling_interval)
 
     return po_account
 
