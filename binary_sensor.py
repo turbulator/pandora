@@ -20,12 +20,12 @@ SENSOR_TYPES = {
     'connection_state': ["Connection state", "", "",  'connectivity', False, "online", 0x00000001, 0x00000000],
     'engine_state': ["Engine state", "mdi:fan", "mdi:fan-off", "", True, "bit_state_1", 0x00000004, 0x00000000],
     'lock_state': ["Lock", "mdi:lock-open", "mdi:lock", "lock", True, "bit_state_1", 0x00000001, 0x00000001],
-    'left_front_door': ["Left Front_Door", "mdi:car-door", "mdi:car-door", "door", True, "bit_state_1", 0x0020000, 0x00000000],
-    'right_front_door': ["Right Front Door", "mdi:car-door", "mdi:car-door", "door", True, "bit_state_1", 0x0040000, 0x00000000],
+    'left_front_door': ["Left Front Door", "mdi:car-door", "mdi:car-door", "door", True, "bit_state_1", 0x00200000, 0x00000000],
+    'right_front_door': ["Right Front Door", "mdi:car-door", "mdi:car-door", "door", True, "bit_state_1", 0x00400000, 0x00000000],
     'left_back_door': ["Left Back Door", "mdi:car-door", "mdi:car-door", "door", True, "bit_state_1", 0x00800000, 0x00000000],
-    'right_back_door': ["Right Back Door", "mdi:car-door", "mdi:car-door", "door", True, "bit_state_1", 0x0100000, 0x00000000],
-    'trunk': ["Trunk", "mdi:car-back", "mdi:car-back", "door", True, "bit_state_1", 0x0200000, 0x00000000],
-    'hood': ["Hood", "mdi:car", "mdi:car", "door", True, "bit_state_1", 0x0400000, 0x00000000],
+    'right_back_door': ["Right Back Door", "mdi:car-door", "mdi:car-door", "door", True, "bit_state_1", 0x01000000, 0x00000000],
+    'trunk': ["Trunk", "mdi:car-back", "mdi:car-back", "door", True, "bit_state_1", 0x02000000, 0x00000000],
+    'hood': ["Hood", "mdi:car", "mdi:car", "door", True, "bit_state_1", 0x04000000, 0x00000000],
 }
 
 
