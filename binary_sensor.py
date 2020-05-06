@@ -19,6 +19,7 @@ _LOGGER = logging.getLogger(__name__)
 SENSOR_TYPES = {
     'connection_state': ["Connection state", "", "",  'connectivity', False, "online", 0x00000001, 0x00000000],
     'engine_state': ["Engine state", "mdi:fan", "mdi:fan-off", "", True, "bit_state_1", 0x00000004, 0x00000000],
+    'moving': ["Moving", "", "",  'motion', True, "move", 0x00000001, 0x00000000],
     'lock_state': ["Lock", "mdi:lock-open", "mdi:lock", "lock", True, "bit_state_1", 0x00000001, 0x00000001],
     'left_front_door': ["Left Front Door", "mdi:car-door", "mdi:car-door", "door", True, "bit_state_1", 0x00200000, 0x00000000],
     'right_front_door': ["Right Front Door", "mdi:car-door", "mdi:car-door", "door", True, "bit_state_1", 0x00400000, 0x00000000],
