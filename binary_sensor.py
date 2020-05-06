@@ -98,6 +98,11 @@ class PandoraSensor(BinarySensorDevice):
         return self._device_class
 
     @property
+    def available(self):
+        """Return True if entity is available."""
+        return self._available
+
+    @property
     def icon(self) -> str:
         """Return the icon of the binary sensor."""
         if self._state:
