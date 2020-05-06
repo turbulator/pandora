@@ -128,7 +128,7 @@ class PandoraSensor(BinarySensorDevice):
 
         if vehicle_state.online == 1 or self._state_sensitive == False:
             self._available = True
-            if getattr(vehicle_state, self._attribute) & self._bit_mask ^ self._xor_mask:
+            if int(getattr(vehicle_state, self._attribute)) & self._bit_mask ^ self._xor_mask:
                 self._state = True
             else:
                 self._state = False
