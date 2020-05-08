@@ -17,16 +17,16 @@ _LOGGER = logging.getLogger(__name__)
 
 
 SENSOR_TYPES = {
-    'connection_state': ["Connection state", "", "",  'connectivity', False, "online", 0x00000001, 0x00000000],
-    'engine_state': ["Engine state", "mdi:fan", "mdi:fan-off", "", True, "bit_state_1", 0x00000004, 0x00000000],
-    'moving': ["Moving", "", "",  'motion', True, "move", 0x00000001, 0x00000000],
-    'lock_state': ["Lock", "mdi:lock-open", "mdi:lock", "lock", True, "bit_state_1", 0x00000001, 0x00000001],
-    'left_front_door': ["Left Front Door", "mdi:car-door", "mdi:car-door", "door", True, "bit_state_1", 0x00200000, 0x00000000],
-    'right_front_door': ["Right Front Door", "mdi:car-door", "mdi:car-door", "door", True, "bit_state_1", 0x00400000, 0x00000000],
-    'left_back_door': ["Left Back Door", "mdi:car-door", "mdi:car-door", "door", True, "bit_state_1", 0x00800000, 0x00000000],
-    'right_back_door': ["Right Back Door", "mdi:car-door", "mdi:car-door", "door", True, "bit_state_1", 0x01000000, 0x00000000],
-    'trunk': ["Trunk", "mdi:car-back", "mdi:car-back", "door", True, "bit_state_1", 0x02000000, 0x00000000],
-    'hood': ["Hood", "mdi:car", "mdi:car", "door", True, "bit_state_1", 0x04000000, 0x00000000],
+    'connection_state': ["Connection state", "", "",  'connectivity', False, "online", 0, 0],
+    'engine_state': ["Engine state", "mdi:fan", "mdi:fan-off", "", True, "bit_state_1", 2, 0],
+    'moving': ["Moving", "", "",  'motion', True, "move", 0, 0],
+    'lock_state': ["Lock", "mdi:lock-open", "mdi:lock", "lock", True, "bit_state_1", 0, 1],
+    'left_front_door': ["Left Front Door", "mdi:car-door", "mdi:car-door", "door", True, "bit_state_1", 21, 0],
+    'right_front_door': ["Right Front Door", "mdi:car-door", "mdi:car-door", "door", True, "bit_state_1", 22, 0],
+    'left_back_door': ["Left Back Door", "mdi:car-door", "mdi:car-door", "door", True, "bit_state_1", 23, 0],
+    'right_back_door': ["Right Back Door", "mdi:car-door", "mdi:car-door", "door", True, "bit_state_1", 24, 0],
+    'trunk': ["Trunk", "mdi:car-back", "mdi:car-back", "door", True, "bit_state_1", 25, 0],
+    'hood': ["Hood", "mdi:car", "mdi:car", "door", True, "bit_state_1", 26, 0],
 }
 
 
@@ -43,10 +43,10 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
                 icon_on = SENSOR_TYPES[parameter][1]
                 icon_off = SENSOR_TYPES[parameter][2]
                 device_class = SENSOR_TYPES[parameter][3]
-                state_sensitive = SENSOR_TYPES[parameter][4]
                 attribute = SENSOR_TYPES[parameter][5]
-                bit_mask = SENSOR_TYPES[parameter][6]
-                xor_mask = SENSOR_TYPES[parameter][7]
+                shift_bits = SENSOR_TYPES[parameter][6]
+                is_negative = SENSOR_TYPES[parameter][7]
+                is_state_sensitive = SENSOR_TYPES[parameter][4]
 
                 device = PandoraSensor(account, 
                                        vehicle,
@@ -55,9 +55,9 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
                                        icon_off,
                                        device_class,
                                        attribute,
-                                       bit_mask,
-                                       xor_mask,
-                                       state_sensitive)
+                                       shift_bits,
+                                       is_negative,
+                                       is_state_sensitive)
                 devices.append(device)
 
     add_entities(devices, True)
@@ -66,7 +66,7 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
 class PandoraSensor(BinarySensorDevice):
     """Representation of a BMW vehicle binary sensor."""
 
-    def __init__(self, account, vehicle, name: str, icon_on: str, icon_off: str, device_class: str, attribute: str, bit_mask: int, xor_mask: int, state_sensitive: bool):
+    def __init__(self, account, vehicle, name: str, icon_on: str, icon_off: str, device_class: str, attribute: str, shift_bits: int, is_negative: int, is_state_sensitive: bool):
         """Constructor."""
         self._vehicle = vehicle
         self._account = account
@@ -76,9 +76,9 @@ class PandoraSensor(BinarySensorDevice):
         self._icon_off = icon_off
         self._device_class = device_class
         self._attribute = attribute
-        self._bit_mask = bit_mask
-        self._xor_mask = xor_mask
-        self._state_sensitive = state_sensitive
+        self._shift_bits = shift_bits
+        self._is_negative = is_negative
+        self._is_state_sensitive = is_state_sensitive
 
     @property
     def should_poll(self) -> bool:
@@ -127,9 +127,9 @@ class PandoraSensor(BinarySensorDevice):
         """Read new state data from the library."""
         vehicle_state = self._vehicle.state
 
-        if vehicle_state.online == 1 or self._state_sensitive == False:
+        if vehicle_state.online == 1 or self._is_state_sensitive == False:
             self._available = True
-            if int(getattr(vehicle_state, self._attribute)) & self._bit_mask ^ self._xor_mask:
+            if (int(getattr(vehicle_state, self._attribute)) >> self._shift_bits) & 0x0000000000000001 ^ self._is_negative:
                 self._state = True
             else:
                 self._state = False
