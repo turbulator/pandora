@@ -27,6 +27,7 @@ SENSOR_TYPES = {
     'right_back_door': ["Right Back Door", "mdi:car-door", "mdi:car-door", "door", True, "bit_state_1", 24, 0],
     'trunk': ["Trunk", "mdi:car-back", "mdi:car-back", "door", True, "bit_state_1", 25, 0],
     'hood': ["Hood", "mdi:car", "mdi:car", "door", True, "bit_state_1", 26, 0],
+    'coolant_heater': ["Coolant Heater", "mdi:thermometer-plus", "mdi:thermometer-plus", "", True, "bit_state_1", 31, 0],
 }
 
 
