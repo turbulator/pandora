@@ -55,6 +55,8 @@ _SERVICE_MAP = {
     'unlock': 'trigger_remote_unlock',
     'start_engine': 'trigger_remote_start_engine',
     'stop_engine': 'trigger_remote_stop_engine',
+    'turn_on_coolant_heater': 'trigger_remote_turn_on_coolant_heater',
+    'turn_off_coolant_heater': 'trigger_remote_turn_off_coolant_heater',
     'turn_on_ext_channel': 'trigger_remote_turn_on_ext_channel',
     'turn_off_ext_channel': 'trigger_remote_turn_off_ext_channel',
 }

@@ -20,6 +20,8 @@ class _Services(Enum):
     REMOTE_UNLOCK = "2"
     REMOTE_START_ENGINE = "4"
     REMOTE_STOP_ENGINE = "8"
+    REMOTE_TURN_ON_COOLANT_HEATER = "21"
+    REMOTE_TURN_OFF_COOLANT_HEATER = "22"
     REMOTE_TURN_ON_EXT_CHANNEL = "33"
     REMOTE_TURN_OFF_EXT_CHANNEL = "34"
 
@@ -100,6 +102,30 @@ class RemoteServices:
         _LOGGER.debug('Triggering remote seat heater')
         # needs to be called via POST, GET is not working
         result = self._trigger_remote_service(_Services.REMOTE_STOP_ENGINE)
+        self._trigger_state_update()
+        return result
+
+
+    def trigger_remote_turn_on_coolant_heater(self) -> RemoteServiceStatus:
+        """Trigger the vehicle to sound its horn.
+
+        A state update is NOT triggered after this, as the vehicle state is unchanged.
+        """
+        _LOGGER.debug('Triggering remote coolant heater')
+        # needs to be called via POST, GET is not working
+        result = self._trigger_remote_service(_Services.REMOTE_TURN_ON_COOLANT_HEATER)
+        self._trigger_state_update()
+        return result
+
+
+    def trigger_remote_turn_off_coolant_heater(self) -> RemoteServiceStatus:
+        """Trigger the vehicle to sound its horn.
+
+        A state update is NOT triggered after this, as the vehicle state is unchanged.
+        """
+        _LOGGER.debug('Triggering remote coolant heater')
+        # needs to be called via POST, GET is not working
+        result = self._trigger_remote_service(_Services.REMOTE_TURN_OFF_COOLANT_HEATER)
         self._trigger_state_update()
         return result
 
